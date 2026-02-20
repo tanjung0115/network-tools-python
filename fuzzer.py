@@ -1,25 +1,46 @@
 import requests
 
-# koordinat targer (perhatikan titik di akhit config.)
-target_url = "http://127.0.0.1:8080/config."
+print("Fuzzer Direktori & Ekstensi Sederhana")
+print("-" * 50)
 
-# amunisi / peluru (daftar eksteni)
-payloads = ["txt","zip", "bak", "php", "old"]
+# 1. Meminta input dari pengguna
+url_dasar = input("Masukkan URL dasar (contoh: http://127.0.0.1:8080/config.): ")
+nama_file_wordlist = input("Masukkan nama file wordlist (contoh: wordlist.txt): ")
 
-print("memulai serangan mini-intruder...")
-print("-"*40)
+print("-" * 50)
 
-# looping
-for peluru in payloads:
-        # menggabungkan target + peluru (misal : http://...../config. + txt)
-        url_tebakan = target_url + peluru
-        # mengirim request GET
-        respon = requests.get(url_tebakan)
-        # mengecek apakah status 200
-        if respon.status_code == 200:
-                print (f"[+] Ditemukan : {url_tebakan}")
-        else:
-                print (f"[-] Gagal (404): {url_tebakan}")
+try:
+    # 2. Membaca isi file teks (wordlist)
+    with open(nama_file_wordlist, "r") as file:
+        daftar_tebakan = file.read().splitlines()
+        
+    print(f" Berhasil memuat {len(daftar_tebakan)} kata dari file {nama_file_wordlist}.")
+    print(" Memulai proses pemindaian (fuzzing)...\n")
+    
+    # 3. Proses pengiriman HTTP Request (Looping)
+    for kata in daftar_tebakan:
+        if kata == "":  # Abaikan jika ada baris kosong di dalam file
+            continue
+            
+        # Menggabungkan URL dasar dengan kata dari wordlist
+        url_lengkap = url_dasar + kata
+        
+        try:
+            # Mengirim HTTP GET request
+            respon = requests.get(url_lengkap)
+            
+            # Memeriksa HTTP Status Code
+            if respon.status_code == 200:
+                print(f" Ditemukan (200 OK) : {url_lengkap}")
+            else:
+                print(f" Gagal ({respon.status_code})     : {url_lengkap}")
+                
+        except requests.exceptions.RequestException:
+            print(f"[x] Error: Tidak dapat terhubung ke server. Pemindaian dihentikan.")
+            break # Menghentikan proses jika server tidak bisa dihubungi
+            
+except FileNotFoundError:
+    print(f" Error: File '{nama_file_wordlist}' tidak ditemukan di dalam folder ini!")
 
-print ("-" *40)
-print ("Serangan Selesai")
+print("-" * 50)
+print("--- Proses Selesai ---")
