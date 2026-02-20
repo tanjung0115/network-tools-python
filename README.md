@@ -27,3 +27,17 @@ Alat ini dibuat untuk memahami cara kerja pemindaian jaringan (*Reconnaissance*)
    ```bash
    git clone [https://github.com/tanjung0115/network-tools-python.git](https://github.com/tanjung0115/Cybersecurity-Portfolio.git)
    cd network-tools-python
+
+
+##  Fitur Baru: Fuzzer Direktori & Ekstensi
+
+Selain Port Scanner, repositori ini sekarang dilengkapi dengan **Python Fuzzer** kustom untuk mencari file tersembunyi (seperti `.bak`, `.env`, atau direktori admin) di server target.
+
+**Fitur Utama Fuzzer:**
+- Membaca target URL secara dinamis.
+- Menggunakan *Wordlist* kustom untuk menembakkan *payload* secara otomatis.
+- Dilengkapi dengan *Error Handling* (`try-except`) jika server target down atau input URL salah.
+
+**Cara Penggunaan:**
+```bash
+python3 fuzzer.py
